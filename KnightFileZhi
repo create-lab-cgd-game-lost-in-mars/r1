@@ -1,0 +1,84 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class Knight : MonoBehaviour
+{
+    public Rigidbody2D knightBody;
+    public float jumpForce = 7f;
+    public float knightSpeed = 6f;
+    private bool onGround;
+    public Animator knightAnimator;
+    public bool flipX;
+    private bool lookRight;
+    public Transform respawnpoint;
+    public Transform finishpoint;
+
+    void Start()
+    {
+        lookRight = true;
+        knightBody = GetComponent<Rigidbody2D>();
+    }
+    void OnCollisionStay2D(Collision2D collision)
+    {
+        onGround = true;
+       
+    }
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        knightAnimator.Play("KnightIdle");
+        if(collision.collider.tag =="Respawn")
+        {
+            transform.position = respawnpoint.transform.position;
+        }
+        if (collision.collider.tag == "Finish")
+        {
+            transform.position = finishpoint.transform.position;
+        }
+    }
+    void Update()
+    {
+        if (Input.GetButtonDown("Jump") && onGround)
+        {
+            knightBody.AddForce(new Vector2(0f, jumpForce), ForceMode2D.Impulse);
+            onGround = false;
+            knightAnimator.Play("KnightJump");
+        }
+        //if (Input.GetKeyDown(KeyCode.X))
+        //{
+        //    knightAnimator.Play("KnightBlock");
+        //} else
+        //{
+        //    knightAnimator.Play("KnightIdle");
+        //}
+        //if (Input.GetKeyDown(KeyCode.Z))
+        //{
+        //    knightAnimator.Play("KnightAttack");
+        //} else
+        //{
+        //    knightAnimator.Play("KnightIdle");
+        //}
+
+        // knightAnimator.Play("KnightIdle");
+
+        //if (Input.GetButtonDown("Jump") && onGround)
+        knightAnimator.SetFloat("Knight_Speed", Mathf.Abs(knightBody.velocity.x));
+    }
+    private void Flip(float horizontal)
+    {
+        if (horizontal > 0 && !lookRight || horizontal < 0 && lookRight)
+        {
+            lookRight = !lookRight;
+            Vector2 theScale = transform.localScale;
+            theScale.x *= -1;
+            transform.localScale = theScale;
+        }
+    }
+    private void FixedUpdate()
+    {
+        float horizontal = Input.GetAxis("Horizontal");
+        knightBody.velocity = new Vector2(knightSpeed * Input.GetAxis("Horizontal"), knightBody.velocity.y);
+        knightBody.transform.rotation = Quaternion.identity;
+        Flip(horizontal);
+    }
+}
