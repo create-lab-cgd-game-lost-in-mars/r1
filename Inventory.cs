@@ -1,32 +1,25 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
-public class Inventory : MonoBehaviour { 
+public class Inventory : MonoBehaviour
 {
-    private Inventory inventory;
-    public GameObject itemButton;
+    public Image[] images;
+    public bool item1PickedUp;
 
     private void Start()
     {
-        inventory = GameObject.FindGameObjectsWithTag("Player").GetComponent<Inventory>();
-    }
-
-    void OnTriggerEnter2D(Collider2D other) {
-
-        if (other.CompareTag("Player")) { 
-
-        
-            for (int i = 0; i < inventory.slots.Length; i++)
+        images = GetComponentsInChildren<Image>();
+        foreach(Image image in images)
             {
-                if (inventory.isFull[i]) == false) {
-                   // ITEM CAN BE ADDED TO INVENTORY !
-                   inventory.isFull[i] = true;
-                   Instantiate(itemButton, inventory.slots[i].transform, false);
-                   Destroy(gameObject);
-                   break;
-                }
+            if(image.name=="item 1" && item1PickedUp)
+            {
+                image.overrideSprite(shipCone);
+                image.overrideSprite(shipEngine);
+                image.overrideSprite(shipFin);
+               
             }
-        }   
+        }
     }
 }
